@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить стих | Miha Kvas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .back-link {
+            text-align: center;
+        }
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+        .error {
+            background: #fee;
+            color: #c00;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .success {
+            background: #efe;
+            color: #0c0;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍺 Miha Kvas</h1>
+        <div class="subtitle">Добавить новый стих</div>
+
+        <div id="error" class="error" style="display: none;"></div>
+        <div id="success" class="success" style="display: none;"></div>
+
+        <form id="poemForm">
+            <div class="form-group">
+                <label>Название стиха</label>
+                <input type="text" id="name" required>
+            </div>
+            <div class="form-group">
+                <label>Текст стиха</label>
+                <textarea id="text" required placeholder="Введите ваш стих..."></textarea>
+            </div>
+            <button type="submit">📝 Опубликовать</button>
+        </form>
+
+        <div class="back-link">
+            <a href="#" id="backLink">← Вернуться в профиль</a>
+        </div>
+    </div>
+
+    <script>
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        const username = getCookie('username');
+
+        if (!username) {
+            window.location.href = '/login';
+        }
+
+        document.getElementById('backLink').href = `/profile/${username}`;
+
+        document.getElementById('poemForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const response = await fetch('/poems', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    name: document.getElementById('name').value,
+                    username: username,
+                    text: document.getElementById('text').value
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                document.getElementById('success').style.display = 'block';
+                document.getElementById('success').textContent = 'Стих успешно опубликован!';
+                document.getElementById('poemForm').reset();
+
+                setTimeout(() => {
+                    window.location.href = `/profile/${username}`;
+                }, 2000);
+            } else {
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = data.detail || 'Ошибка при публикации';
+            }
+        });
+    </script>
+</body>
+</html>

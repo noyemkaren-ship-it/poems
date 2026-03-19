@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль | Miha Kvas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .user-info h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .user-info p {
+            color: #666;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        .nav-button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .logout-btn {
+            background: #ff6b6b;
+        }
+        .poems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .poem-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        .poem-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .poem-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .poem-text {
+            color: #444;
+            line-height: 1.8;
+            font-size: 1.1em;
+            white-space: pre-line;  /* Сохраняет переносы строк */
+            margin-bottom: 15px;
+        }
+        .poem-meta {
+            color: #999;
+            font-size: 0.9em;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+        .no-poems {
+            background: white;
+            border-radius: 15px;
+            padding: 50px;
+            text-align: center;
+            color: #666;
+            font-size: 1.2em;
+            grid-column: 1 / -1;
+        }
+        .error {
+            background: #fee;
+            color: #c00;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="user-info">
+                <h1 id="username">{{ username }}</h1>
+                <p id="email">Загрузка...</p>
+            </div>
+            <div class="nav-buttons">
+                <a href="/add_poem" class="nav-button">➕ Добавить стих</a>
+                <a href="/poems-page" class="nav-button">📚 Все стихи</a>
+                <a href="#" id="logoutBtn" class="nav-button logout-btn">🚪 Выйти</a>
+            </div>
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <h2 style="color: white; margin-bottom: 20px;">Мои стихи</h2>
+        <div id="poems" class="poems-grid">
+            <div class="no-poems">Загрузка стихов...</div>
+        </div>
+    </div>
+
+    <script>
+        const username = '{{ username }}';
+
+        async function loadUserData() {
+            const response = await fetch(`/users/${username}`);
+            const user = await response.json();
+            document.getElementById('email').textContent = user.email;
+        }
+
+        async function loadUserPoems() {
+            const response = await fetch(`/poems/${username}`);
+            const data = await response.json();
+
+            const poemsDiv = document.getElementById('poems');
+
+            if (data.poems && data.poems.length > 0) {
+                poemsDiv.innerHTML = data.poems.map(poem => `
+                    <div class="poem-card">
+                        <div class="poem-title">${poem.name}</div>
+                        <div class="poem-text">${poem.text.replace(/\n/g, '<br>')}</div>
+                        <div class="poem-meta">
+                            <span>📅 ${new Date().toLocaleDateString()}</span>
+                            <span>👤 @${poem.username}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                poemsDiv.innerHTML = '<div class="no-poems">📝 У вас пока нет стихов. Добавьте первый!</div>';
+            }
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.cookie = 'username=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+            window.location.href = '/login';
+        });
+
+        loadUserData();
+        loadUserPoems();
+    </script>
+</body>
+</html>
