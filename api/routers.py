@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from db.user_repository import UserRepository, PoemsRepository
+from db.repository import UserRepository, PoemsRepository
 from shemas.user import UserS
 from shemas.poem import PoemS
 import random
