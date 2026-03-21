@@ -22,15 +22,7 @@ async def register(user_data: UserS):
         user_data.password
     )
 
-    response = RedirectResponse(url=f"/profile/{user.username}", status_code=303)
-    response.set_cookie(
-        key="username",
-        value=user.username,
-        max_age=86400,
-        httponly=True,
-        samesite="lax"
-    )
-    return response
+    return {"message": "User created", "username": user.username}
 
 
 @router.post("/login", tags=["Login"])
@@ -39,16 +31,7 @@ async def login(user_data: UserS):
     if not user or user.password != user_data.password or user.email != user_data.email:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    response = RedirectResponse(url=f"/profile/{user.username}", status_code=303)
-    response.set_cookie(
-        key="username",
-        value=user.username,
-        max_age=86400,
-        httponly=True,
-        samesite="lax"
-    )
-    return response
-
+    return {"message": "Login successful", "username": user.username}
 @router.get("/users", tags=["users"])
 async def get_users():
     users = user_repo.get_all_users()
