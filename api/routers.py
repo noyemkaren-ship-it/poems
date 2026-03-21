@@ -1,4 +1,6 @@
 from fastapi import APIRouter, HTTPException
+from starlette.responses import RedirectResponse
+
 from db.repository import UserRepository, PoemsRepository
 from shemas.user import UserS
 from shemas.poem import PoemS
@@ -8,8 +10,7 @@ router = APIRouter()
 user_repo = UserRepository()
 poem_repo = PoemsRepository()
 
-
-@router.post("/register")
+@router.post("/register", tags=["Register"])
 async def register(user_data: UserS):
     existing = user_repo.get_user(user_data.username)
     if existing:
@@ -20,24 +21,34 @@ async def register(user_data: UserS):
         user_data.email,
         user_data.password
     )
-    return {"message": "User created", "username": user.username}
 
-
-@router.post("/login")
+    response = RedirectResponse(url=f"/profile/{user.username}", status_code=303)
+    response.set_cookie(
+        key="username",
+        value=user.username,
+        max_age=86400
+    )
+    return response
+@router.post("/login", tags=["login"])
 async def login(user_data: UserS):
     user = user_repo.get_user(user_data.username)
     if not user or user.password != user_data.password or user.email != user_data.email:
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    return {"message": "Login successful", "username": user.username}
 
-
-@router.get("/users")
+    response = RedirectResponse(url=f"/profile/{user.username}", status_code=303)
+    response.set_cookie(
+        key="username",
+        value=user.username,
+        max_age=86400
+    )
+    return response
+@router.get("/users", tags=["users"])
 async def get_users():
     users = user_repo.get_all_users()
     return {"users": [{"username": u.username, "email": u.email} for u in users]}
 
 
-@router.get("/users/{username}")
+@router.get("/users/{username}", tags=["users/username"])
 async def get_user(username: str):
     user = user_repo.get_user(username)
     if not user:
@@ -45,7 +56,7 @@ async def get_user(username: str):
     return {"username": user.username, "email": user.email}
 
 
-@router.post("/poems")
+@router.post("/poems", tags=["poems"])
 async def create_poem(poem_data: PoemS):
     author = user_repo.get_user(poem_data.username)
     if not author:
@@ -59,14 +70,14 @@ async def create_poem(poem_data: PoemS):
     return {"name": poem.name, "username": poem.username, "text": poem.text}
 
 
-@router.get("/poems")
+@router.get("/poems", tags=["poems"])
 async def get_poems():
     poems = poem_repo.get_all_poems()
     shuffled = random.sample(poems, len(poems))  # перемешиваем
     return {"poems": [{"name": p.name, "username": p.username, "text": p.text} for p in shuffled]}
 
 
-@router.get("/poems/random")
+@router.get("/poems/random", tags=["poems"])
 async def get_random_poem():
     poems = poem_repo.get_all_poems()
     if not poems:
@@ -75,7 +86,7 @@ async def get_random_poem():
     return {"name": poem.name, "username": poem.username, "text": poem.text}
 
 
-@router.get("/poems/{username}")
+@router.get("/poems/{username}", tags=["poems"])
 async def get_poems_by_author(username: str):
     author = user_repo.get_user(username)
     if not author:
