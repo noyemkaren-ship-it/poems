@@ -26,10 +26,14 @@ async def register(user_data: UserS):
     response.set_cookie(
         key="username",
         value=user.username,
-        max_age=86400
+        max_age=86400,
+        httponly=True,
+        samesite="lax"
     )
     return response
-@router.post("/login", tags=["login"])
+
+
+@router.post("/login", tags=["Login"])
 async def login(user_data: UserS):
     user = user_repo.get_user(user_data.username)
     if not user or user.password != user_data.password or user.email != user_data.email:
@@ -39,9 +43,12 @@ async def login(user_data: UserS):
     response.set_cookie(
         key="username",
         value=user.username,
-        max_age=86400
+        max_age=86400,
+        httponly=True,
+        samesite="lax"
     )
     return response
+
 @router.get("/users", tags=["users"])
 async def get_users():
     users = user_repo.get_all_users()
