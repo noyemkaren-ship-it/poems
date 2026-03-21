@@ -2,115 +2,186 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Профиль | Miha Kvas</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
         }
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             min-height: 100vh;
             padding: 20px;
         }
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         .header {
             background: white;
-            border-radius: 20px;
-            padding: 30px;
+            border-radius: 28px;
+            padding: 25px 30px;
             margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
+            gap: 20px;
         }
         .user-info h1 {
-            color: #333;
-            margin-bottom: 10px;
+            font-size: 1.8rem;
+            color: #1e3c72;
+            margin-bottom: 6px;
         }
         .user-info p {
-            color: #666;
+            color: #5a6e8a;
+            font-size: 0.9rem;
         }
         .nav-buttons {
             display: flex;
-            gap: 15px;
+            flex-wrap: wrap;
+            gap: 12px;
         }
         .nav-button {
             padding: 10px 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
             text-decoration: none;
-            border-radius: 8px;
+            border-radius: 40px;
             font-weight: 500;
+            font-size: 0.9rem;
             transition: all 0.3s;
+            display: inline-block;
         }
         .nav-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 12px rgba(30, 60, 114, 0.3);
         }
         .logout-btn {
-            background: #ff6b6b;
+            background: #dc3545;
+        }
+        .logout-btn:hover {
+            background: #c82333;
+            box-shadow: 0 5px 12px rgba(220, 53, 69, 0.3);
+        }
+        .section-title {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            padding-left: 8px;
         }
         .poems-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
         }
         .poem-card {
             background: white;
-            border-radius: 15px;
-            padding: 20px;
+            border-radius: 24px;
+            padding: 24px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             transition: all 0.3s;
+            cursor: pointer;
         }
         .poem-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
         }
         .poem-title {
-            font-size: 1.5em;
-            color: #333;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3c72;
             margin-bottom: 15px;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
+            border-left: 4px solid #2a5298;
+            padding-left: 15px;
         }
         .poem-text {
-            color: #444;
-            line-height: 1.8;
-            font-size: 1.1em;
-            white-space: pre-line;  /* Сохраняет переносы строк */
-            margin-bottom: 15px;
+            color: #2d3e50;
+            line-height: 1.7;
+            font-size: 1rem;
+            white-space: pre-line;
+            margin-bottom: 20px;
+            max-height: 200px;
+            overflow-y: auto;
         }
         .poem-meta {
-            color: #999;
-            font-size: 0.9em;
+            color: #8a9bb0;
+            font-size: 0.8rem;
             display: flex;
             justify-content: space-between;
-            border-top: 1px solid #eee;
-            padding-top: 10px;
+            border-top: 1px solid #ecf0f1;
+            padding-top: 15px;
         }
         .no-poems {
             background: white;
-            border-radius: 15px;
-            padding: 50px;
+            border-radius: 28px;
+            padding: 50px 30px;
             text-align: center;
-            color: #666;
-            font-size: 1.2em;
+            color: #5a6e8a;
+            font-size: 1.1rem;
             grid-column: 1 / -1;
         }
         .error {
-            background: #fee;
-            color: #c00;
-            padding: 15px;
-            border-radius: 8px;
+            background: #ffe3e3;
+            color: #c0392b;
+            padding: 12px 20px;
+            border-radius: 40px;
             margin-bottom: 20px;
             text-align: center;
+            font-weight: 500;
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            .header {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+            }
+            .nav-buttons {
+                justify-content: center;
+                width: 100%;
+            }
+            .nav-button {
+                flex: 1;
+                text-align: center;
+                padding: 10px 12px;
+                font-size: 0.85rem;
+            }
+            .section-title {
+                font-size: 1.3rem;
+                padding-left: 0;
+                text-align: center;
+            }
+            .poems-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .poem-card {
+                padding: 20px;
+            }
+            .poem-title {
+                font-size: 1.2rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .user-info h1 {
+                font-size: 1.5rem;
+            }
+            .nav-button {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+            .poem-text {
+                font-size: 0.95rem;
+                max-height: 180px;
+            }
         }
     </style>
 </head>
@@ -118,10 +189,9 @@
     <div class="container">
         <div class="header">
             <div class="user-info">
-                <h1 id="username">{{ username }}</h1>
+                <h1>🍺 {{ username }}</h1>
                 <p id="email">Загрузка...</p>
             </div>
-
             <div class="nav-buttons">
                 <a href="/add_poem" class="nav-button">➕ Добавить стих</a>
                 <a href="/poems-page" class="nav-button">📚 Все стихи</a>
@@ -131,7 +201,7 @@
 
         <div id="error" class="error" style="display: none;"></div>
 
-        <h2 style="color: white; margin-bottom: 20px;">Мои стихи</h2>
+        <div class="section-title">📖 Мои стихи</div>
         <div id="poems" class="poems-grid">
             <div class="no-poems">Загрузка стихов...</div>
         </div>
@@ -141,36 +211,55 @@
         const username = '{{ username }}';
 
         async function loadUserData() {
-            const response = await fetch(`/users/${username}`);
-            const user = await response.json();
-            document.getElementById('email').textContent = user.email;
+            try {
+                const response = await fetch(`/users/${username}`);
+                const user = await response.json();
+                document.getElementById('email').textContent = user.email;
+            } catch (err) {
+                console.error('Ошибка загрузки данных пользователя');
+            }
         }
 
         async function loadUserPoems() {
-            const response = await fetch(`/poems/${username}`);
-            const data = await response.json();
+            try {
+                const response = await fetch(`/poems/${username}`);
+                const data = await response.json();
 
-            const poemsDiv = document.getElementById('poems');
+                const poemsDiv = document.getElementById('poems');
 
-            if (data.poems && data.poems.length > 0) {
-                poemsDiv.innerHTML = data.poems.map(poem => `
-                    <div class="poem-card">
-                        <div class="poem-title">${poem.name}</div>
-                        <div class="poem-text">${poem.text.replace(/\n/g, '<br>')}</div>
-                        <div class="poem-meta">
-                            <span>📅 ${new Date().toLocaleDateString()}</span>
-                            <span>👤 @${poem.username}</span>
+                if (data.poems && data.poems.length > 0) {
+                    poemsDiv.innerHTML = data.poems.map(poem => `
+                        <div class="poem-card">
+                            <div class="poem-title">${escapeHtml(poem.name)}</div>
+                            <div class="poem-text">${escapeHtml(poem.text).replace(/\n/g, '<br>')}</div>
+                            <div class="poem-meta">
+                                <span>📅 ${new Date().toLocaleDateString('ru-RU')}</span>
+                                <span>✍️ @${escapeHtml(poem.username)}</span>
+                            </div>
                         </div>
-                    </div>
-                `).join('');
-            } else {
-                poemsDiv.innerHTML = '<div class="no-poems">📝 У вас пока нет стихов. Добавьте первый!</div>';
+                    `).join('');
+                } else {
+                    poemsDiv.innerHTML = '<div class="no-poems">📝 У вас пока нет стихов. Добавьте первый!</div>';
+                }
+            } catch (err) {
+                const poemsDiv = document.getElementById('poems');
+                poemsDiv.innerHTML = '<div class="no-poems">❌ Ошибка загрузки стихов</div>';
             }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
         }
 
         document.getElementById('logoutBtn').addEventListener('click', (e) => {
             e.preventDefault();
-            document.cookie = 'username=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+            document.cookie = 'username=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
             window.location.href = '/login';
         });
 
