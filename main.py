@@ -19,7 +19,7 @@ async def poems_page(request: Request):
 async def root():
     return Errors(
         error="Is page empty",
-        text="Please leave theese page and try again"
+        text="Please leave theese page and try again or connect theese href http://46.253.132.225:3500/login"
     )
 
 
